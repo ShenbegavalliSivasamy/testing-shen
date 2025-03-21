@@ -1,0 +1,67 @@
+name: Generate SKU List
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - sbp-with-sku-names-from-api-1
+
+jobs:
+  update-sku-options:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: sbp-with-sku-names-from-api-1
+
+      - name: Set up jq
+        run: sudo apt-get install jq
+
+      - name: Update SKU Options
+        run: |
+          # Define the JSON data
+          json_data='{
+            "data": [
+              {"id": 1, "name": "XDR-ESS", "updated_at": "2023-06-22T19:58:32.71252Z"},
+              {"id": 2, "name": "XDR-ADV", "updated_at": "2023-06-22T19:58:32.71252Z"},
+              {"id": 3, "name": "XDR-ING-1GB", "updated_at": "2023-06-22T19:58:32.71252Z"},
+              {"id": 4, "name": "XDR-DATARET-90", "updated_at": "2023-06-22T19:58:32.71252Z"},
+              {"id": 5, "name": "XDR-DATARET-180", "updated_at": "2023-06-22T19:58:32.71252Z"}
+            ]
+          }'
+
+          # Extract SKU names using jq and construct a properly formatted output
+          skus=$(echo "$json_data" | jq -r '.data[].name')
+          output=""
+          first=true
+          for sku in $skus
+          do
+             if $first; then
+               output+="- $sku\n"
+               first=false
+             else
+               output+="          - $sku\n"  # Indent subsequent items
+             fi
+          done
+
+          # Use printf to ensure proper formatting in the generated file
+          printf -v formatted_output "%s" "$output"
+
+          # Replace the placeholder in the workflow file
+          sed -i "s|# This needs to be replaced with a proper list during runtime|$formatted_output|g" $GITHUB_WORKSPACE/.github/workflows/generate-claim-code.yml
+
+      - name: Print Updated Workflow File
+        run: |
+          echo "Updated workflow file contents:"
+          cat $GITHUB_WORKSPACE/.github/workflows/generate-claim-code.yml
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Updated SKU options"
+          branch: sbp-with-sku-names-from-api-1
+          file_pattern: ".github/workflows/generate-claim-code.yml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
