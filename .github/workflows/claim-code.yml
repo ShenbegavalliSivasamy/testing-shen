@@ -1,0 +1,31 @@
+name: Generate Claim Code from SBP
+
+on:
+  workflow_dispatch:
+    inputs:
+      sku:
+        description: 'Enter SKU from options displayed in the [GitHub Discussion](https://github.com/your-repo/issues/1)'
+        required: true
+        type: choice
+        options:
+          # This needs to be replaced with a proper list during runtime
+      environment:
+        description: 'Target Environment'
+        required: true
+        type: choice
+        options:
+          - DEV
+          - PROD
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    name: "Deploying SKU on: ${{ inputs.environment }} 🌍"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy SKU
+        run: |
+          echo "Deploying SKU: ${{ inputs.sku }} to environment: ${{ inputs.environment }}"
+          # Add your deployment commands here
