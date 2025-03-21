@@ -51,12 +51,12 @@ jobs:
           printf -v formatted_output "%s" "$output"
 
           # Replace the placeholder in the workflow file
-          sed -i "s|# This needs to be replaced with a proper list during runtime|$formatted_output|g" $GITHUB_WORKSPACE/.github/workflows/generate-claim-code.yml
+          sed -i "s|# This needs to be replaced with a proper list during runtime|$formatted_output|g" $GITHUB_WORKSPACE/.github/workflows/claim-code.yml
 
       - name: Print Updated Workflow File
         run: |
           echo "Updated workflow file contents:"
-          cat $GITHUB_WORKSPACE/.github/workflows/generate-claim-code.yml
+          cat $GITHUB_WORKSPACE/.github/workflows/claim-code.yml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
