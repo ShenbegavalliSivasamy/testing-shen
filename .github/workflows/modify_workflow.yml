@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - sbp-with-sku-names-from-api-1
+      - main
 
 jobs:
   update-sku-options:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: sbp-with-sku-names-from-api-1
+          ref: main
 
       - name: Set up jq
         run: sudo apt-get install jq
@@ -61,7 +61,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Updated SKU options"
-          branch: sbp-with-sku-names-from-api-1
+          branch: main
           file_pattern: ".github/workflows/generate-claim-code.yml"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
