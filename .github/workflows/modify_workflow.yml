@@ -62,6 +62,6 @@ jobs:
         with:
           commit_message: "Updated SKU options"
           branch: main
-          file_pattern: ".github/workflows/generate-claim-code.yml"
+          file_pattern: ".github/workflows/claim-code.yml"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
