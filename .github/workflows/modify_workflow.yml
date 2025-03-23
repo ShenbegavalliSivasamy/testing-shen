@@ -57,6 +57,7 @@ jobs:
         run: |
           echo "Updated workflow file contents:"
           cat $GITHUB_WORKSPACE/.github/workflows/claim-code.yml
+          echo $secrets.USER_TOKEN
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
