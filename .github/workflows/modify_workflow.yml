@@ -57,12 +57,17 @@ jobs:
         run: |
           echo "Updated workflow file contents:"
           cat $GITHUB_WORKSPACE/.github/workflows/claim-code.yml
-          echo $secrets.USER_TOKEN
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Updated SKU options"
-          branch: main
-          file_pattern: ".github/workflows/claim-code.yml"
-        env:
-          GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+
+      - name: Set up Git for Bot User
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit files
+        run: |
+          git add .github/workflows/claim-code.yml
+          git commit -m "Updated SKU options"
+          git push origin main
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
