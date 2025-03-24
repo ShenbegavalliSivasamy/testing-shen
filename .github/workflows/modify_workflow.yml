@@ -65,4 +65,4 @@ jobs:
           branch: main
           file_pattern: ".github/workflows/claim-code.yml"
         env:
-          GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TEST_TOKEN }}
