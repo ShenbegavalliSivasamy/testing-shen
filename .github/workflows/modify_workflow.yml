@@ -59,7 +59,7 @@ jobs:
 
       - name: Commit files with specific author
         env:
-          GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TEST_TOKEN }}
         run: |
           git add .github/workflows/claim-code.yml
           git commit --author="Bot Author <bot-author@example.com>" -m "Updated SKU options"
