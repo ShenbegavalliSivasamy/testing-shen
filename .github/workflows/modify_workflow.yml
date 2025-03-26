@@ -11,6 +11,11 @@ on:
 jobs:
   update-sku-options:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      workflows: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,7 +27,6 @@ jobs:
 
       - name: Update SKU Options
         run: |
-          # Define the JSON data
           json_data='{
             "data": [
               {"id": 1, "name": "XDR-ESS", "updated_at": "2023-06-22T19:58:32.71252Z"},
@@ -33,24 +37,20 @@ jobs:
             ]
           }'
 
-          # Extract SKU names using jq and construct a properly formatted output
           skus=$(echo "$json_data" | jq -r '.data[].name')
           output=""
           first=true
-          for sku in $skus
-          do
+          for sku in $skus; do
              if $first; then
                output+="- $sku\n"
                first=false
              else
-               output+="          - $sku\n"  # Indent subsequent items
+               output+="          - $sku\n"
              fi
           done
 
-          # Use printf to ensure proper formatting in the generated file
           printf -v formatted_output "%s" "$output"
 
-          # Replace the placeholder in the workflow file
           sed -i "s|# This needs to be replaced with a proper list during runtime|$formatted_output|g" $GITHUB_WORKSPACE/.github/workflows/claim-code.yml
 
       - name: Set up Git for Bot User
@@ -59,10 +59,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Commit files with specific author
+        env:
+          GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
         run: |
           git add .github/workflows/claim-code.yml
           git commit --author="Bot Author <bot-author@example.com>" -m "Updated SKU options"
           git push origin main
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
